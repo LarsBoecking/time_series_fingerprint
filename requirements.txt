@@ -6,8 +6,10 @@ matplotlib
 seaborn
 
 # models 
-pytorch
-sk-learn
+torch
+torchvision
+torchaudio
+scikit-learn
 sktime
 
 # rocket git repo
