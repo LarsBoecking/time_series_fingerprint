@@ -1,0 +1,25 @@
+numpy
+pandas
+
+# visualisations
+matplotlib
+seaborn
+
+# models 
+pytorch
+sk-learn
+sktime
+
+# rocket git repo
+numba
+scikit-posthocs
+mrseql
+
+# data processing
+tqdm
+aeon
+
+# sktime extra dependencies
+pmdarima
+tbats
+prophet
