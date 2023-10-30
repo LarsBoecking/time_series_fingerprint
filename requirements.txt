@@ -11,6 +11,7 @@ torchvision
 torchaudio
 scikit-learn
 sktime
+sktime-dl
 
 # rocket git repo
 numba
