@@ -113,7 +113,7 @@ evaluator.plot_boxplots(metric_name="accuracy")
 evaluator.rank(metric_name="accuracy").sort_values(by="accuracy_mean_rank")
 
 # %%
-from utils import draw_cd_diagram
+from utils_cd_diagram import draw_cd_diagram
 
 draw_cd_diagram(
     df_perf=evaluator.metrics_by_strategy_dataset.copy().rename(
