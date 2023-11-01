@@ -34,6 +34,10 @@ This research project elaborates on concepts for an data centric perspective on 
     - http://www.timeseriesclassification.com/aeon-toolkit/Archives/Multivariate2018_ts.zip
     - place it here: datasets/Multivariate_ts
 
+- Results folder:
+    - https://github.com/time-series-machine-learning/tsml-eval/tree/main/results
+        - including subfolder classification & regression
+    - place it here: results/
 
 ## 🚀  Quickstart - How to run the code 
 
