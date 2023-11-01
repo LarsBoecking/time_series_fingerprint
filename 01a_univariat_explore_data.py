@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from src.utils_univariate import _load_data_set, list_univariate_data_sets
+from src.utils import _load_data_set, list_data_sets
 from src.utils_visualization import NotebookFigureSaver
-
+from src.utils import _get_data_set_descriptive_performance,_get_performance_master_dict,_calculate_descriptive_performance,_load_algorithm_performance
+from collections import defaultdict
+from tqdm import tqdm 
 
 # Where to save the figures
 CHAPTER_ID = "01a_univariat_explore_data"
@@ -32,7 +34,7 @@ def _visualize_instances_per_target(
     Returns:
         None
     """
-    train_data, test_data = _load_data_set(data_set_name=data_set_name)
+    train_data, test_data = _load_data_set(data_set_name=data_set_name, multivariate=False)
 
     classes = train_data["class_val"].unique()
 
@@ -73,7 +75,7 @@ def _visualize_instances_per_target(
                 "Data set: "
                 + r"$\bf{"
                 + str(data_set_name)
-                + "}$, "
+                + "}$\n "
                 + "Target class:"
                 + r"$\bf{"
                 + str(target_class)
@@ -98,8 +100,14 @@ def _visualize_instances_per_target(
 
 
 # %%
+# show that the visualisation is working for one example data set
+_visualize_instances_per_target(
+    data_set_name="Beef", n_samples_per_class=10, save_figure=False
+)
+
+# %%
 # visualise all available data sets
-for data_set in list_univariate_data_sets():
+for data_set in list_data_sets(multivariate=False):
     print(data_set)
     _visualize_instances_per_target(
         data_set_name=data_set, n_samples_per_class=10, save_figure=True
@@ -107,130 +115,71 @@ for data_set in list_univariate_data_sets():
 
 
 # %%
-_visualize_instances_per_target(
-    data_set_name="Beef", n_samples_per_class=10, save_figure=True
-)
+def _visualize_performance_data_set(data_set_name,multivariate=False, save_figure=False):
+    data_set_performance = _get_data_set_descriptive_performance(
+        data_set_name, multivariate=multivariate
+    )
+    # Extract algorithm names
+    algorithm_names = [
+        algorithm_name.strip("_ACC") for algorithm_name in data_set_performance.columns
+    ]
 
-# %%
-_visualize_instances_per_target(
-    data_set_name="Adiac", n_samples_per_class=10, save_figure=True
-)
-# %%
-_visualize_instances_per_target(
-    data_set_name="AllGestureWiimoteX", n_samples_per_class=10, save_figure=True
-)
-# %%
-_visualize_instances_per_target(
-    data_set_name="ArrowHead", n_samples_per_class=10, save_figure=True
-)
-# %%
-_visualize_instances_per_target(
-    data_set_name="Wafer", n_samples_per_class=10, save_figure=True
-)
+    # Set the figure size for better visualization
+    plt.figure(figsize=(15, 6))
 
-
-# %%
-def _visualize_descriptives_targets(
-    data_set_name="ArrowHead", n_samples_per_class=10, save_figure=False
-):
-    """
-    Generate a visualization of statistical summary information for each time series in a given dataset.
-
-    Parameters:
-        data_set_name (str): The name of the dataset to load. Default is "ArrowHead".
-        n_samples_per_class (int): The number of samples to select from each target class. Default is 10.
-
-    Returns:
-        None
-    """
-
-    train_data, test_data = _load_data_set(data_set_name=data_set_name)
-
-    classes = train_data["class_val"].unique()
-
-    # Create subplots for each class
-    fig, axes = plt.subplots(
-        1, len(classes), figsize=(4 * len(classes), 4), sharex=False, sharey=True
+    # Generate the heatmap
+    sns.heatmap(
+        data_set_performance,
+        cmap="coolwarm",
+        annot=True,
+        fmt=".2f",
+        cbar=True,
+        annot_kws={"size": 7},
     )
 
-    # Initialize vmin and vmax to cover the entire range of statistics
-    vmin = np.inf
-    vmax = -np.inf
+    # Add labels and title
+    plt.xlabel("Algorithm", fontsize=15)
+    plt.ylabel("Descriptive Performance", fontsize=15)  # Updated y-axis label
+    plt.title(f"Performance on {data_set_name} [$ACC\%$]", fontsize=20)
 
-    for i, target_class in enumerate(classes):
-        # Filter the data for the current class
-        class_data = train_data[train_data["class_val"] == target_class]
+    # Calculate the positions and labels for x-ticks
+    x_tick_positions = [i + 0.5 for i in range(len(algorithm_names))]
+    x_tick_labels = algorithm_names
 
-        if len(class_data) < n_samples_per_class:
-            print(
-                f"\n ATTENTION:\n len(class_data)= {len(class_data)} < n_samples_per_class {n_samples_per_class}"
-            )
-            # If there are fewer instances in the class than n_samples_per_class, adjust it
-            n_samples_per_class = len(class_data)
+    # Set the x-ticks at the calculated positions and use the labels
+    plt.xticks(
+        x_tick_positions,
+        x_tick_labels,
+        rotation=90,
+        ha="center",
+        fontsize=10,
+    )
+    plt.yticks(rotation=0, fontsize=10)
 
-        # Select n random samples from the target class
-        class_samples = class_data.sample(n=n_samples_per_class)
-
-        # Calculate statistical summary information for each time series
-        statistics = (
-            class_samples["dim_0"]
-            .apply(lambda x: pd.Series(x).describe().drop(columns=["count"]))
-            .T
-        )
-        statistics = statistics.T.drop(columns=["count"]).T
-
-        # Update vmin and vmax based on the statistics
-        current_vmin = statistics.values.min()
-        current_vmax = statistics.values.max()
-
-        if current_vmin < vmin:
-            vmin = current_vmin
-        if current_vmax > vmax:
-            vmax = current_vmax
-
-        # Create a heatmap to visualize the statistics
-        sns.heatmap(
-            statistics,
-            ax=axes[i],
-            cmap="coolwarm",
-            annot=False,
-            center=True,
-            vmin=vmin,
-            vmax=vmax,
-            fmt=".2f",
-        )
-
-        # Add title and labels to each subplot
-        axes[i].set_title(f"Target class: {target_class}")
-        axes[i].set_ylabel("Statistics")
-        axes[i].set_xlabel("Time Series Index")
-
-    # Adjust layout spacing between subplots
-    plt.tight_layout()
+    # Show the plot
+    plt.grid(visible=True, linestyle="--", alpha=0.7)
+    plt.tight_layout()  # Ensures that labels and ticks fit within the figure area
     if save_figure:
-        fig_saver.save_fig(
-            f"data_set_{data_set_name}_samples_{n_samples_per_class}_descriptive"
-        )
-
+        fig_saver.save_fig(f"data_set_{data_set_name}_performance")
     # Show the plot
     plt.show()
 
 
-# %%
-_visualize_descriptives_targets(
-    data_set_name="ArrowHead", n_samples_per_class=20, save_figure=True
-)
-
 
 # %%
-_visualize_descriptives_targets(
-    data_set_name="Adiac", n_samples_per_class=20, save_figure=True
-)
+# genereate visualisations for one specific data set example
+data_set_name = "Beef"
+_visualize_performance_data_set(data_set_name,multivariate=False, save_figure=False)
 
 # %%
-_visualize_descriptives_targets(
-    data_set_name="Wafer", n_samples_per_class=20, save_figure=True
-)
-
-
+# generate visualisations for all data sets
+for data_set in tqdm(list_data_sets(multivariate=False)):
+    # try catch block
+    try:
+        _visualize_performance_data_set(
+            data_set_name=data_set,
+            save_figure=True,
+        )
+    except:
+        pass
 # %%
