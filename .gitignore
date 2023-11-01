@@ -95,3 +95,6 @@ sk_time_examples/*
 
 # leave out the sktime examples 
 sk_time_examples
+
+# also ignore .png files
+*.png
