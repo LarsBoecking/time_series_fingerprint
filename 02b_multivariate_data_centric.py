@@ -1,7 +1,6 @@
 # %%
 # import required functions and classes
 import os
-import warnings
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -25,26 +24,6 @@ fig_saver = NotebookFigureSaver(CHAPTER_ID)
 from warnings import simplefilter
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
-
-# %% [markdown]
-# ### calculate the descriptes master table
-
-# %%
-data_descriptives_master_table = _get_dataset_descriptives_master_table()
-data_descriptives_master_table = pd.DataFrame(data_descriptives_master_table)
-data_descriptives_master_table.to_csv(
-    os.path.join("datasets", "material", "own_dataset_descriptives.csv")
-)
-
-# %%
-# check master table performance
-performance_dict = _get_performance_master_dict()
-performance_dict["ArticularyWordRecognition"].head(3)
-
-# %%
-# calculate the descriptive statistics
-algorithm_descriptives = _calculate_algorithm_descriptives(performance_dict)
-algorithm_descriptives["ArticularyWordRecognition"].head(3)
 
 
 # %% [markdown]
