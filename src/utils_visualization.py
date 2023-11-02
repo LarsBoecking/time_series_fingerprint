@@ -32,7 +32,7 @@ class NotebookFigureSaver:
         self.LEGEND_FONT_SIZE = LEGEND_FONT_SIZE
 
     # function to save matplots to images folder
-    def save_fig(self, fig_id, tight_layout=True, fig_extension="png", resolution=300):
+    def save_fig(self, fig_id, tight_layout=False, fig_extension="png", resolution=300):
         path = os.path.join(self.IMAGES_PATH, fig_id + "." + fig_extension)
         print("Saving figure", fig_id)
         if tight_layout:
