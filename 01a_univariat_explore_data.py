@@ -21,6 +21,7 @@ fig_saver = NotebookFigureSaver(CHAPTER_ID)
 def _visualize_instances_per_target(
     data_set_name: str = "ArrowHead", 
     n_samples_per_class: int = 5, 
+    max_number_classes: int = 5,
     save_figure: bool = False
 ) -> None:
     """
@@ -37,7 +38,11 @@ def _visualize_instances_per_target(
     train_data, test_data = _load_data_set(data_set_name=data_set_name, multivariate=False)
 
     classes = train_data["class_val"].unique()
+    available_classes = len(classes)
 
+    if available_classes > max_number_classes:
+        classes = classes[:max_number_classes]
+        
     # Create subplots for each class
     fig, axes = plt.subplots(
         len(classes), 1, figsize=(12, 3 * len(classes)), sharex=True, sharey=True
@@ -75,7 +80,11 @@ def _visualize_instances_per_target(
                 "Data set: "
                 + r"$\bf{"
                 + str(data_set_name)
-                + "}$\n "
+                + "}$"
+                + f", [Number of classes: "
+                + r"$\bf{"
+                + str(available_classes)
+                + "}$] \n"
                 + "Target class:"
                 + r"$\bf{"
                 + str(target_class)
@@ -89,6 +98,9 @@ def _visualize_instances_per_target(
         axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
         axes[i].set_xlim(row["dim_0"].index.min(), row["dim_0"].index.max())
+    
+        if i >= max_number_classes:
+            break
 
     # Adjust layout spacing between subplots
     plt.tight_layout()
