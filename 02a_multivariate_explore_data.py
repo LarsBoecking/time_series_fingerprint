@@ -15,18 +15,9 @@ from src.utils_visualization import NotebookFigureSaver
 CHAPTER_ID = "02a_multivariate_explore_data"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
-from src.utils import (
-    _calculate_descriptive_performance,
-    _get_data_set_descriptive_performance,
-    _get_performance_master_dict,
-    _load_data_set,
-)
-
-# %%
-data_set_name = "ArticularyWordRecognition"
-
-train_data, test_data = _load_data_set(data_set_name=data_set_name, multivariate=True)
-train_data.head(3)
+from src.utils import (_calculate_descriptive_performance,
+                       _get_data_set_descriptive_performance,
+                       _get_performance_master_dict, _load_data_set)
 
 # %% [markdown]
 # ### Visualise the multivariate timeseries data
@@ -47,13 +38,13 @@ def visualize_time_series(
 
     # Filter classes and dimensions
     classes = train_data["class_val"].unique()
+    available_classes = len(classes)
     classes = (
         classes[:max_number_classes] if len(classes) > max_number_classes else classes
     )
 
-    num_dimensions = min(
-        max_num_dimensions, sum(["dim" in col for col in train_data.columns])
-    )
+    available_dimensions = sum(["dim" in col for col in train_data.columns])
+    num_dimensions = min(max_num_dimensions, available_dimensions)
 
     # Create subplots for each class and dimension
     fig, axes = plt.subplots(
@@ -95,7 +86,15 @@ def visualize_time_series(
                     "Data set: "
                     + r"$\bf{"
                     + str(data_set_name)
-                    + "}$\n "
+                    + "}$"
+                    + f", [#classes: "
+                    + r"$\bf{"
+                    + str(available_classes)
+                    + "}$"
+                    + f", #dim.: "
+                    + r"$\bf{"
+                    + str(available_dimensions)
+                    + "}$] \n"
                     + "Target: "
                     + r"$\bf{"
                     + str(target_class)
@@ -148,13 +147,15 @@ for data_set in tqdm(list_data_sets(multivariate=True)):
         data_set_name=data_set,
         n_samples_per_class=10,
         max_num_dimensions=5,
+        max_number_classes=5,
         save_figure=True,
     )
 
 
 # %%
-def _visualize_performance_data_set(data_set_name,multivariate=True, save_figure=False):
-    
+def _visualize_performance_data_set(
+    data_set_name, multivariate=True, save_figure=False
+):
     data_set_performance = _get_data_set_descriptive_performance(
         data_set_name, multivariate=True
     )
@@ -193,7 +194,7 @@ def _visualize_performance_data_set(data_set_name,multivariate=True, save_figure
         ha="center",
         fontsize=10,
     )
-    
+
     plt.yticks(rotation=0, fontsize=10)
 
     # Show the plot
@@ -222,3 +223,4 @@ for data_set in tqdm(list_data_sets(multivariate=True)):
         )
     except:
         pass
+# %%
