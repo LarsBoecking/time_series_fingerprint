@@ -3,14 +3,14 @@
 import os
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 from src.utils import _load_data_set, list_data_sets
 from src.utils_visualization import NotebookFigureSaver
-from src.utils import _get_data_set_descriptive_performance,_get_performance_master_dict,_calculate_descriptive_performance,_load_algorithm_performance
-from collections import defaultdict
-from tqdm import tqdm 
+from src.utils_performance import (
+    _get_data_set_descriptive_performance,
+)
+from tqdm import tqdm
 
 # Where to save the figures
 CHAPTER_ID = "01a_univariat_explore_data"
@@ -19,10 +19,10 @@ fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 # %%
 def _visualize_instances_per_target(
-    data_set_name: str = "ArrowHead", 
-    n_samples_per_class: int = 5, 
+    data_set_name: str = "ArrowHead",
+    n_samples_per_class: int = 5,
     max_number_classes: int = 5,
-    save_figure: bool = False
+    save_figure: bool = False,
 ) -> None:
     """
     Generate a visualization of instances per target class in a dataset.
@@ -35,14 +35,16 @@ def _visualize_instances_per_target(
     Returns:
         None
     """
-    train_data, test_data = _load_data_set(data_set_name=data_set_name, multivariate=False)
+    train_data, test_data = _load_data_set(
+        data_set_name=data_set_name, multivariate=False
+    )
 
     classes = train_data["class_val"].unique()
     available_classes = len(classes)
 
     if available_classes > max_number_classes:
         classes = classes[:max_number_classes]
-        
+
     # Create subplots for each class
     fig, axes = plt.subplots(
         len(classes), 1, figsize=(12, 3 * len(classes)), sharex=True, sharey=True
@@ -98,7 +100,7 @@ def _visualize_instances_per_target(
         axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
         axes[i].set_xlim(row["dim_0"].index.min(), row["dim_0"].index.max())
-    
+
         if i >= max_number_classes:
             break
 
@@ -106,7 +108,9 @@ def _visualize_instances_per_target(
     plt.tight_layout()
 
     if save_figure:
-        fig_saver.save_fig(f"data_set_{data_set_name}_samples_{n_samples_per_class}")
+        fig_saver.save_fig(
+            f"data_set_{data_set_name}_samples_{n_samples_per_class}_classes_{max_number_classes}"
+        )
     # Show the plot
     plt.show()
 
@@ -114,20 +118,29 @@ def _visualize_instances_per_target(
 # %%
 # show that the visualisation is working for one example data set
 _visualize_instances_per_target(
-    data_set_name="Beef", n_samples_per_class=10, save_figure=False
+    data_set_name="Beef",
+    n_samples_per_class=10,
+    max_number_classes=3,
+    save_figure=False,
 )
 
 # %%
-# visualise all available data sets
-for data_set in list_data_sets(multivariate=False):
-    print(data_set)
-    _visualize_instances_per_target(
-        data_set_name=data_set, n_samples_per_class=10, save_figure=True
-    )
+# be honest
+does_the_user_have_limitless_computation_power = False
+
+if does_the_user_have_limitless_computation_power:
+    # visualise all available data sets
+    for data_set in list_data_sets(multivariate=False):
+        print(data_set)
+        _visualize_instances_per_target(
+            data_set_name=data_set, n_samples_per_class=10, save_figure=True
+        )
 
 
 # %%
-def _visualize_performance_data_set(data_set_name,multivariate=False, save_figure=False):
+def _visualize_performance_data_set(
+    data_set_name, multivariate=False, save_figure=False
+):
     data_set_performance = _get_data_set_descriptive_performance(
         data_set_name, multivariate=multivariate
     )
@@ -177,21 +190,25 @@ def _visualize_performance_data_set(data_set_name,multivariate=False, save_figur
     plt.show()
 
 
-
 # %%
 # genereate visualisations for one specific data set example
 data_set_name = "Beef"
-_visualize_performance_data_set(data_set_name,multivariate=False, save_figure=False)
+_visualize_performance_data_set(data_set_name, multivariate=False, save_figure=False)
 
 # %%
-# generate visualisations for all data sets
-for data_set in tqdm(list_data_sets(multivariate=False)):
-    # try catch block
-    try:
-        _visualize_performance_data_set(
-            data_set_name=data_set,
-            save_figure=True,
-        )
-    except:
-        pass
+# be honest
+does_the_user_have_limitless_computation_power = False
+
+if does_the_user_have_limitless_computation_power:
+    # generate visualisations for all data sets
+    for data_set in tqdm(list_data_sets(multivariate=False)):
+        # try catch block
+        try:
+            _visualize_performance_data_set(
+                data_set_name=data_set,
+                save_figure=True,
+            )
+        except:
+            pass
+
 # %%
