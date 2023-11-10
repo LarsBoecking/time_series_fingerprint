@@ -11,7 +11,7 @@ from src.utils_visualization import NotebookFigureSaver
 from src.utils_data_centric import _get_data_set_class_level_characteristics
 
 # Where to save the figures
-CHAPTER_ID = "01b_univariate_data_centric"
+CHAPTER_ID = "b_univariate_data_centric"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 # %%
@@ -57,8 +57,10 @@ def _visualize_descriptives_data_set(
         1, len(classes), figsize=(4 * len(classes), 6), sharex=False, sharey=True
     )
     cbar_ax = fig.add_axes([0.92, 0.1, 0.02, 0.78])
+    
+    available_classes = len(classes)
 
-    for i, target_class in enumerate(classes):
+    for i, target_class in enumerate(sorted(classes)):
         class_statistics = target_class_descriptives[target_class]
         
         # if n_samples_per_class is not inf only select the first n_samples_per_class rows of class_statistics
@@ -101,13 +103,18 @@ def _visualize_descriptives_data_set(
                 "Data set: "
                 + r"$\bf{"
                 + str(data_set_name)
-                + "}$\n"
+                + "}$"
+                + f", [Number of classes: "
+                + r"$\bf{"
+                + str(available_classes)
+                + "}$] \n"
                 + "Target class:"
                 + r"$\bf{"
                 + str(target_class)
                 + "}$"
             )
         else:
+            # Add title and labels to each subplot
             axes[i].set_title(f"Target class: " + r"$\bf{" + str(target_class) + "}$")
             
         # write y labels if subplot i == 0
@@ -125,7 +132,7 @@ def _visualize_descriptives_data_set(
 # %%
 _visualize_descriptives_data_set(
     data_set_name = "GunPoint",
-    n_samples_per_class = 5,
+    n_samples_per_class = 10,
     max_number_classes = 5,
     save_figure = False
 )
@@ -140,7 +147,7 @@ if does_the_user_have_limitless_computation_power:
             _visualize_descriptives_data_set(
                 data_set_name = data_set,
                 n_samples_per_class = 10,
-                max_number_classes = 5,
+                max_number_classes = 3,
                 save_figure = True
             )
         except:
