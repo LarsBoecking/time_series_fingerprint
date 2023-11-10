@@ -219,6 +219,8 @@ def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None)
         data_set_characteristics - data_set_characteristics.mean()
     ) / data_set_characteristics.std()
     
+    if not multivariate:
+        normalized_data_set_characteristics=normalized_data_set_characteristics.drop(columns=["dim_count"])
     
     return normalized_data_set_characteristics
 

@@ -11,7 +11,7 @@ from src.utils_visualization import NotebookFigureSaver
 from src.utils_data_centric import _get_data_set_class_level_characteristics
 
 # Where to save the figures
-CHAPTER_ID = "b_univariate_data_centric"
+CHAPTER_ID = "b_data_centric"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 # %%

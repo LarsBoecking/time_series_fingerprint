@@ -13,7 +13,7 @@ from src.utils_visualization import NotebookFigureSaver
 from src.utils_data_centric import _get_all_data_set_characteristics
 
 # Where to save the figures
-CHAPTER_ID = "01d_univariate_uncertainty"
+CHAPTER_ID = "e_algorithm_ml_problem"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 
@@ -22,16 +22,8 @@ normalized_data_set_characteristics = _get_all_data_set_characteristics(multivar
 model_performance_descriptive = _get_algorithm_performance_all_data_set(
     algorithm_name="Arsenal_ACC.csv", multivariate=False
 )
-
-#%%
 X = pd.DataFrame(normalized_data_set_characteristics)
 Y = pd.DataFrame(model_performance_descriptive).T
-
-#%%
-X
-
-#%%
-Y
 
 # %%
 # inner join x and y on index

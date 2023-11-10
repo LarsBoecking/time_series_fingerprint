@@ -13,7 +13,7 @@ from src.utils_performance import (
 from tqdm import tqdm
 
 # Where to save the figures
-CHAPTER_ID = "a_univariat_explore_data"
+CHAPTER_ID = "a_explore_data"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 

@@ -7,23 +7,26 @@ import pandas as pd
 import seaborn as sns
 from src.utils_performance import (
     _all_algorithms_all_datasets_performance,
-    _calculate_descriptive_performance,
-    _get_algorithm_performance_all_data_set,
-    _get_performance_master_dict,
 )
 
 from src.utils_visualization import NotebookFigureSaver
 from src.utils_data_centric import _get_all_data_set_characteristics
 
 # Where to save the figures
-CHAPTER_ID = "01d_univariate_uncertainty"
+CHAPTER_ID = "d_data_centric_mapping"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 
 # %%
+run_all_data_set = True
+if run_all_data_set:
+    number_data_sets = None
+else:
+    number_data_sets = 10
+    
 # get the characteristic statistics on all data sets
 normalized_data_set_characteristics = _get_all_data_set_characteristics(
-    multivariate=False, number_data_sets=50
+    multivariate=False, number_data_sets=number_data_sets
 )
 X = pd.DataFrame(normalized_data_set_characteristics)
 
@@ -44,7 +47,7 @@ print(f"Number of rows not matched: {num_rows_not_matched} from total of {len(X)
 
 # %%
 fig, axes = plt.subplots(
-    1, 2, figsize=(12, 10), sharey=False, gridspec_kw={"width_ratios": [5, 3]}
+    1, 2, figsize=(20, 15), sharey=False, gridspec_kw={"width_ratios": [5, 3]}
 )
 input_columns = X.columns
 target_columns = Y.columns
@@ -98,6 +101,12 @@ axes[1].set_xticklabels(algorithm_names, rotation=90, ha="right", fontsize=8)
 
 # Adjust layout to prevent overlap
 plt.tight_layout()
+
+if run_all_data_set:
+    fig_saver.save_fig(f"data_set_mapping_all")
+else:    
+    fig_saver.save_fig(f"data_set_mapping_{number_data_sets}")
+
 
 # Show the plot
 plt.show()

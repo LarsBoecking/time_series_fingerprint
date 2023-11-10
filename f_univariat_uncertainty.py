@@ -27,11 +27,6 @@ algorithm_data_set_performance = _all_algorithms_all_datasets_performance(
 Y = pd.DataFrame(algorithm_data_set_performance).T
 
 # %%
-X=X.drop(columns=["dim_count"])
-
-
-
-# %%
 # inner join x and y on index
 matched_data_sets = X.join(Y, how="inner")
 # document how many rows were not matched
