@@ -52,12 +52,11 @@ cd data_centric_ts
 pip install -r requirements.txt
 ```
 
-run the notebooks to explore the data-centric-AI concepts
+run the code to explore the data-centric-AI concepts
 
 ```bash
-# for example for the univariate case
-01_univariat_explore_data.ipynb
-
+# for example for the univariate data exploration 
+python a_univariat_explore_data.py 
 ```
 
 

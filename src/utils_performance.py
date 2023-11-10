@@ -190,3 +190,55 @@ def _get_data_set_descriptive_performance(data_set_name, multivariate: bool = Tr
     model_performance_descriptive = pd.DataFrame(model_performance_descriptive)
 
     return model_performance_descriptive
+
+def _get_algorithm_performance_all_data_set(algorithm_name="Arsenal_ACC.csv",multivariate=False):
+    model_performance = _load_algorithm_performance(algorithm_name=algorithm_name,multivariate=multivariate)
+
+    model_performance_descriptive = {}
+    fold_columns = model_performance.columns.drop("folds:")
+
+    for index_data_set, row in model_performance.iterrows():
+        data_set_name = row["folds:"]
+
+        # get the raw performance for the algorithm csv and the data set row
+        algorithm_data_set_performance_raw = model_performance.loc[
+            model_performance["folds:"] == data_set_name
+        ][fold_columns].values.flatten()
+
+        descriptive_stats = _calculate_descriptive_performance(
+            algorithm_data_set_performance_raw
+        )
+
+        model_performance_descriptive[data_set_name] = descriptive_stats
+        
+    return model_performance_descriptive
+
+
+
+def _all_algorithms_all_datasets_performance(
+    performance_of_interest="$\\hat{\\mu}$", multivariate=False
+):
+    all_algorithm_performance = _get_performance_master_dict(multivariate=multivariate)
+    descriptive_performance_dict = {}
+    # iterate data set names in keys and the performance in all_algorithm_performance
+    for data_set_name, performance in all_algorithm_performance.items():
+        descriptive_performance_dict[data_set_name] = {}
+        # Use data_set_name and performance variables to perform desired operations
+        # iterate all algorithms via the columns in performance
+        for algorithm in performance.columns:
+            descriptive_performance_dict[data_set_name][
+                algorithm
+            ] = _calculate_descriptive_performance(
+                algorithm_data_set_performance_raw=performance[algorithm].values
+            )
+
+    visual_dict = {}
+    # iterate all data_set_name and the algorithms in descriptive_performance_dict
+    for data_set_name, algorithms in descriptive_performance_dict.items():
+        visual_dict[data_set_name] = {}
+        for algorithm, performance in algorithms.items():
+            visual_dict[data_set_name][algorithm] = performance[performance_of_interest]
+
+    algorithm_data_set_performance = pd.DataFrame(visual_dict)
+
+    return algorithm_data_set_performance

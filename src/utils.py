@@ -41,6 +41,8 @@ def _load_data_set(
     """
     # Determine the extract path based on whether the data set is multivariate or univariate
     extract_path = MULTIVARIATE_DATA_PATH if multivariate else UNIVARIATE_DATA_PATH
+    
+    #! normalize data set, such that the embedding is comparable
 
     # Load the train data set
     train_data = _load_provided_dataset(
@@ -50,6 +52,8 @@ def _load_data_set(
         return_type=None,
         extract_path=extract_path,
     )
+    
+    #! normalize to have values between 0 and 1 based on train data 
 
     # Load the test data set
     test_data = _load_provided_dataset(
@@ -59,6 +63,6 @@ def _load_data_set(
         return_type=None,
         extract_path=extract_path,
     )
-
+    
     # Return the train and test data sets
     return train_data, test_data

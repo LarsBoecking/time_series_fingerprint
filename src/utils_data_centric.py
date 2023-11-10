@@ -13,7 +13,7 @@ from tqdm import tqdm
 from scipy.stats import skew, kurtosis, pearsonr, entropy
 from matplotlib.patches import Rectangle
 
-from src.utils import _load_data_set
+from src.utils import _load_data_set, list_data_sets
 
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
@@ -47,32 +47,29 @@ def _get_dataset_descriptives(
         data_set_name=data_set_name, multivariate=multivariate
     )
 
-    if multivariate:
-        # Count columns that contain the string "dim_" in train_data
-        dim_count = train_data.filter(like="dim_").shape[1]
+    # Count columns that contain the string "dim_" in train_data
+    dim_count = train_data.filter(like="dim_").shape[1]
 
-        # Get the number of instances and length of each instance in the train_data
-        number_train_instances = len(train_data["dim_0"])
-        length_train_instance = len(train_data["dim_0"][0])
+    # Get the number of instances and length of each instance in the train_data
+    number_train_instances = len(train_data["dim_0"])
+    length_train_instance = len(train_data["dim_0"][0])
 
-        # Get the number of instances and length of each instance in the test_data
-        number_test_instances = len(test_data["dim_0"])
-        length_test_instance = len(test_data["dim_0"][0])
+    # Get the number of instances and length of each instance in the test_data
+    number_test_instances = len(test_data["dim_0"])
+    length_test_instance = len(test_data["dim_0"][0])
 
-        # Get the number of unique target classes in the train_data
-        number_target_classes = len(train_data["class_val"].unique())
+    # Get the number of unique target classes in the train_data
+    number_target_classes = len(train_data["class_val"].unique())
 
-        # Generate a dictionary with all the calculated values
-        data_set_descriptive_dict = {
-            "dim_count": dim_count,
-            "number_train_instances": number_train_instances,
-            "length_train_instance": length_train_instance,
-            "number_test_instances": number_test_instances,
-            "length_test_instance": length_test_instance,
-            "number_target_classes": number_target_classes,
-        }
-    else:
-        data_set_descriptive_dict = {}
+    # Generate a dictionary with all the calculated values
+    data_set_descriptive_dict = {
+        "dim_count": dim_count,
+        "number_train_instances": number_train_instances,
+        "length_train_instance": length_train_instance,
+        "number_test_instances": number_test_instances,
+        "length_test_instance": length_test_instance,
+        "number_target_classes": number_target_classes,
+    }
 
     return data_set_descriptive_dict
 
@@ -102,35 +99,39 @@ def _get_data_set_class_level_characteristics(data_set_name, multivariate=False)
             .T
         )
         statistics = statistics.T.drop(columns=["count"])
+        statistics.rename(columns={
+            'mean': '$\\bar{x}$',
+            'std': '$\sigma$',
+            'min': 'min',
+            'max': 'max',
+            '10%': '$x_{10}$',
+            '20%': '$x_{20}$',
+            '30%': '$x_{30}$',
+            '40%': '$x_{40}$',
+            '50%': 'median',  # median is already a percentile
+            '60%': '$x_{60}$',
+            '70%': '$x_{70}$',
+            '80%': '$x_{80}$',
+            '90%': '$x_{90}$',
+        }, inplace=True)
 
-        # Calculate additional statistics
-        statistics["median"] = class_samples["dim_0"].apply(lambda x: np.median(x))
-        statistics["iqr"] = class_samples["dim_0"].apply(
-            lambda x: np.percentile(x, 75) - np.percentile(x, 25)
-        )
-        statistics["cv"] = class_samples["dim_0"].apply(
-            lambda x: np.std(x) / np.mean(x) if np.mean(x) != 0 else 0
-        )
+        # Calculate additional statistics with LaTeX symbols
+        statistics['$IQR$'] = class_samples["dim_0"].apply(lambda x: np.percentile(x, 75) - np.percentile(x, 25))
+        statistics['$CV$'] = class_samples["dim_0"].apply(lambda x: np.std(x) / np.mean(x) if np.mean(x) != 0 else np.nan)
 
         # Calculate statistics on the mean change in a time step and max change in a time step
-        statistics["mean_change"] = class_samples["dim_0"].apply(
-            lambda x: np.mean(np.diff(x))
-        )
-        statistics["max_change"] = class_samples["dim_0"].apply(
-            lambda x: np.max(np.diff(x))
-        )
-        statistics["std_change"] = class_samples["dim_0"].apply(
-            lambda x: np.std(np.diff(x))
-        )
+        statistics[r'$\overline{\Delta x}$'] = class_samples["dim_0"].apply(lambda x: np.mean(np.diff(x)))
+        statistics['$max(\Delta x)$'] = class_samples["dim_0"].apply(lambda x: np.max(np.diff(x)))
+        statistics['$\sigma(\Delta x)$'] = class_samples["dim_0"].apply(lambda x: np.std(np.diff(x)))
 
-        # Calculate Skewness and Kurtosis
-        statistics["skewness"] = class_samples["dim_0"].apply(lambda x: skew(x))
-        statistics["kurtosis"] = class_samples["dim_0"].apply(lambda x: kurtosis(x))
+        # Fisher-Pearson coefficient of skewness
+        statistics['$\gamma_{1}$'] = class_samples["dim_0"].apply(skew)
+        # Kurtosis is the fourth central moment divided by the square of the variance
+        statistics['$Kurt[X]$'] = class_samples["dim_0"].apply(kurtosis)
 
-        # Calculate Autocorrelation
-        statistics["autocorrelation"] = class_samples["dim_0"].apply(
-            lambda x: pearsonr(x[:-1], x[1:])[0]
-        )
+        # Calculate pearson autocorrelation with a lag of 1
+        statistics['$R_{XX}$'] = class_samples["dim_0"].apply(lambda x: pearsonr(x[:-1], x[1:])[0])
+
 
         target_class_descriptives[target_class] = statistics
 
@@ -146,6 +147,7 @@ def _get_data_set_comparative_characteristics(data_set_name, multivariate=False)
     # iterate all target_class keys and values in target_class_descriptives
     for target_class, statistics in target_class_descriptives.items():
         # calculate the mean values over all class instances
+        #! could also be the median or another descriptive statistic, sigma, range, IQR
         mean_statistics = statistics.mean()
         mean_statistics.name = (
             target_class  # Set the name of the Series to the target class
@@ -166,12 +168,11 @@ def _get_data_set_comparative_characteristics(data_set_name, multivariate=False)
     # For each statistic in the mean_target_class_descriptives, calculate the various measures
     for statistic in mean_target_class_descriptives.columns:
         stats_values = mean_target_class_descriptives[statistic]
+        #! is this really a good descriptive for how different the classes are? 
         stats_difference = {
-            f"{statistic}_std": stats_values.std(),
-            f"{statistic}_range": stats_values.max() - stats_values.min(),
-            f"{statistic}_iqr": stats_values.quantile(0.75)
-            - stats_values.quantile(0.25),
-            f"{statistic}_variance": stats_values.var(),
+            rf"$\sigma ($"+statistic+"$)$": stats_values.std(),
+            rf"$range ($"+statistic+"$)$": stats_values.max() - stats_values.min(),
+            rf"$IQR ($"+statistic+"$)$": stats_values.quantile(0.75) - stats_values.quantile(0.25),
         }
         # Add the calculated differences for each statistic to the main dictionary
         difference_descriptives.update(stats_difference)
@@ -191,6 +192,35 @@ def _get_overall_data_set_characteristics(data_set_name, multivariate=False):
     )
 
     return combined_characteristics
+
+
+def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None):
+    all_data_set_characteristics = {}
+    
+    if number_data_sets is None:
+        data_sets = list_data_sets(multivariate=multivariate)
+    else:
+        data_sets = list_data_sets(multivariate=multivariate)[:number_data_sets]
+        
+    for data_set in tqdm(data_sets):
+        # try catch block
+        try:
+            all_data_set_characteristics[data_set] = _get_overall_data_set_characteristics(
+                data_set_name=data_set,
+            )
+        except:
+            pass
+    # convert all_data_set_characteristics to dataframe
+    data_set_characteristics = pd.DataFrame.from_dict(
+        all_data_set_characteristics, orient="index"
+    )
+    # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
+    normalized_data_set_characteristics = (
+        data_set_characteristics - data_set_characteristics.mean()
+    ) / data_set_characteristics.std()
+    
+    
+    return normalized_data_set_characteristics
 
 
 def _get_dataset_descriptives_master_table(multivariate: bool = True):

@@ -13,7 +13,7 @@ from src.utils_performance import (
 from tqdm import tqdm
 
 # Where to save the figures
-CHAPTER_ID = "01a_univariat_explore_data"
+CHAPTER_ID = "a_univariat_explore_data"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 
@@ -120,7 +120,7 @@ def _visualize_instances_per_target(
 _visualize_instances_per_target(
     data_set_name="Beef",
     n_samples_per_class=10,
-    max_number_classes=3,
+    max_number_classes=5,
     save_figure=False,
 )
 
@@ -133,7 +133,10 @@ if does_the_user_have_limitless_computation_power:
     for data_set in list_data_sets(multivariate=False):
         print(data_set)
         _visualize_instances_per_target(
-            data_set_name=data_set, n_samples_per_class=10, save_figure=True
+            data_set_name=data_set,
+            max_number_classes=3,
+            n_samples_per_class=10,
+            save_figure=True,
         )
 
 
