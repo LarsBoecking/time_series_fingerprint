@@ -93,7 +93,7 @@ target_heatmap = sns.heatmap(
     yticklabels=False,  # Hide y-tick labels for the second plot (shared y-axis)
 )
 axes[1].set_title("Target Performance")
-axes[1].set_xlabel("Target Columns")
+axes[1].set_xlabel("Algorithm")
 
 # Set consistent formatting for x and y tick labels
 algorithm_names = [algorithm_name.strip("_ACC") for algorithm_name in Y.columns]
