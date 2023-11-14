@@ -26,7 +26,7 @@ else:
     
 # get the characteristic statistics on all data sets
 normalized_data_set_characteristics = _get_all_data_set_characteristics(
-    multivariate=False, number_data_sets=number_data_sets
+    multivariate=False, number_data_sets=number_data_sets,normalize_each_characteristic=True
 )
 X = pd.DataFrame(normalized_data_set_characteristics)
 
@@ -47,7 +47,7 @@ print(f"Number of rows not matched: {num_rows_not_matched} from total of {len(X)
 
 # %%
 fig, axes = plt.subplots(
-    1, 2, figsize=(20, 15), sharey=False, gridspec_kw={"width_ratios": [5, 3]}
+    1, 2, figsize=(15, 10), sharey=False, gridspec_kw={"width_ratios": [5, 3]}
 )
 input_columns = X.columns
 target_columns = Y.columns
@@ -110,6 +110,5 @@ else:
 
 # Show the plot
 plt.show()
-
 
 # %%

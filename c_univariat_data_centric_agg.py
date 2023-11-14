@@ -34,7 +34,7 @@ def _visualize_descriptives_data_set(
     )
 
     # generate a heatmap for df
-    plt.figure(figsize=(15, 6))
+    plt.figure(figsize=(15, 12))
     sns.heatmap(
         normalized_data_set_characteristics,
         cmap="coolwarm",
@@ -68,7 +68,7 @@ def _visualize_descriptives_data_set(
 _visualize_descriptives_data_set(
     number_data_sets=10,
     normalize_each_characteristic=True,
-    save_figure=False,
+    save_figure=True,
 )
 # %%
 _visualize_descriptives_data_set(
