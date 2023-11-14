@@ -214,10 +214,11 @@ def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None)
     data_set_characteristics = pd.DataFrame.from_dict(
         all_data_set_characteristics, orient="index"
     )
+
     # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
     normalized_data_set_characteristics = (
-        data_set_characteristics - data_set_characteristics.mean()
-    ) / data_set_characteristics.std()
+        data_set_characteristics - data_set_characteristics.min()
+    ) / (data_set_characteristics.max() - data_set_characteristics.min())
     
     if not multivariate:
         normalized_data_set_characteristics=normalized_data_set_characteristics.drop(columns=["dim_count"])
