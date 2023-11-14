@@ -67,6 +67,8 @@ def _visualize_descriptives_data_set(
         if n_samples_per_class != float('inf'):
             class_statistics = class_statistics.head(n_samples_per_class)
 
+        # TODO: check if this is correct
+
         # scale each column to the range [0, 1]
         class_statistics_scaled = (class_statistics - min_values_all_classes) / (
             max_values_all_classes - min_values_all_classes
