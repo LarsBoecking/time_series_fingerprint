@@ -194,7 +194,7 @@ def _get_overall_data_set_characteristics(data_set_name, multivariate=False):
     return combined_characteristics
 
 
-def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None):
+def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None, normalize_each_characteristic=False):
     all_data_set_characteristics = {}
     
     if number_data_sets is None:
@@ -215,15 +215,18 @@ def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None)
         all_data_set_characteristics, orient="index"
     )
 
-    # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
-    normalized_data_set_characteristics = (
-        data_set_characteristics - data_set_characteristics.min()
-    ) / (data_set_characteristics.max() - data_set_characteristics.min())
+    if normalize_each_characteristic:
+        # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
+        return_data_set_characteristics = (
+            data_set_characteristics - data_set_characteristics.min()
+        ) / (data_set_characteristics.max() - data_set_characteristics.min())
+    else: 
+        return_data_set_characteristics = data_set_characteristics
     
     if not multivariate:
-        normalized_data_set_characteristics=normalized_data_set_characteristics.drop(columns=["dim_count"])
+        return_data_set_characteristics=return_data_set_characteristics.drop(columns=["dim_count"])
     
-    return normalized_data_set_characteristics
+    return return_data_set_characteristics
 
 
 def _get_dataset_descriptives_master_table(multivariate: bool = True):
