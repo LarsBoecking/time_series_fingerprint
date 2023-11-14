@@ -37,8 +37,8 @@ sns.heatmap(
     annot=False,
     cbar=True,
     # min and max values for the colorbar selected by try and error
-    vmax=1,
-    vmin=-1,
+    #vmax=1,
+    #vmin=-1,
 )
 
 # Add labels and title
