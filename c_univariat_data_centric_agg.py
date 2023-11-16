@@ -15,12 +15,6 @@ CHAPTER_ID = "c_data_centric_agg"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 # %%
-# check one individual data set as an example
-data_set_name = "Beef"
-_get_overall_data_set_characteristics(data_set_name, multivariate=False)
-
-
-# %%
 def _visualize_descriptives_data_set(
     number_data_sets=None,
     multivariate=False,
@@ -33,8 +27,13 @@ def _visualize_descriptives_data_set(
         normalize_each_characteristic=normalize_each_characteristic,
     )
 
-    # generate a heatmap for df
-    plt.figure(figsize=(15, 12))
+    # scaling the figure to a reasonable size
+    if number_data_sets is None:
+        fig_size = (20, int(128/5)+ 2)
+    else:
+        fig_size = (20, int(number_data_sets/5)+ 2)
+        
+    plt.figure(figsize=fig_size)
     sns.heatmap(
         normalized_data_set_characteristics,
         cmap="coolwarm",
@@ -48,7 +47,7 @@ def _visualize_descriptives_data_set(
     plt.title("Summarizing descriptive statistics of various data sets", fontsize=20)
 
     # rotate the x ticks
-    plt.xticks(rotation=45, ha="right")
+    # plt.xticks(rotation=45, ha="right")
     plt.yticks(rotation=0)
 
     # Show the plot
@@ -66,14 +65,17 @@ def _visualize_descriptives_data_set(
 
 # %%
 _visualize_descriptives_data_set(
-    number_data_sets=10,
+    number_data_sets=50,
     normalize_each_characteristic=True,
     save_figure=True,
 )
 # %%
-_visualize_descriptives_data_set(
-    number_data_sets=None,
-    normalize_each_characteristic=True,
-    save_figure=True,
-)
+
+for number_data_sets in [10,20,30,50,None]:
+    _visualize_descriptives_data_set(
+        number_data_sets=number_data_sets,
+        normalize_each_characteristic=True,
+        save_figure=True,
+    )
+
 # %%
