@@ -86,6 +86,7 @@ ENV/
 # do not upload the data set
 datasets/Multivariate_ts/*
 datasets/Univariate_ts/*
+datasets/data_centric/*
 
 # do not upload the rocket implementation 
 rocket/*

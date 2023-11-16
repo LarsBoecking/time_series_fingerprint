@@ -24,7 +24,7 @@ def list_data_sets(multivariate: bool = True):
     
     subfolders = [f.name for f in os.scandir(search_path) if f.is_dir()]
     
-    return subfolders
+    return sorted(subfolders)
 
 
 def _load_data_set(

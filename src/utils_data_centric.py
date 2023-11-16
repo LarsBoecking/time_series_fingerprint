@@ -20,7 +20,7 @@ simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 # Define the data paths
 MULTIVARIATE_DATA_PATH = os.path.join(os.getcwd(), "datasets", "Multivariate_ts")
 UNIVARIATE_DATA_PATH = os.path.join(os.getcwd(), "datasets", "Univariate_ts")
-
+DATA_CENTRIC_PATH = os.path.join(os.getcwd(), "datasets", "data_centric")
 
 def _get_dataset_descriptives(
     data_set_name: str,
@@ -63,12 +63,12 @@ def _get_dataset_descriptives(
 
     # Generate a dictionary with all the calculated values
     data_set_descriptive_dict = {
-        "dim_count": dim_count,
-        "number_train_instances": number_train_instances,
-        "length_train_instance": length_train_instance,
-        "number_test_instances": number_test_instances,
-        "length_test_instance": length_test_instance,
-        "number_target_classes": number_target_classes,
+        r"$N^{d}$": dim_count,
+        r"$||X_{train}||$": number_train_instances,
+        r"$||x_{train}^{i}||$": length_train_instance,
+        r"$||X_{test}||$": number_test_instances,
+        r"$||x_{test}^{i}||$": length_test_instance,
+        r"$||Y_{C}||$": number_target_classes,
     }
 
     return data_set_descriptive_dict
@@ -115,7 +115,7 @@ def _get_data_set_class_level_characteristics(data_set_name, multivariate=False)
             '90%': '$x_{90}$',
         }, inplace=True)
 
-        # Calculate additional statistics with LaTeX symbols
+        # Calculate additional statistics for interquantile range and CV
         statistics['$IQR$'] = class_samples["dim_0"].apply(lambda x: np.percentile(x, 75) - np.percentile(x, 25))
         statistics['$CV$'] = class_samples["dim_0"].apply(lambda x: np.std(x) / np.mean(x) if np.mean(x) != 0 else np.nan)
 
@@ -126,6 +126,7 @@ def _get_data_set_class_level_characteristics(data_set_name, multivariate=False)
 
         # Fisher-Pearson coefficient of skewness
         statistics['$\gamma_{1}$'] = class_samples["dim_0"].apply(skew)
+        
         # Kurtosis is the fourth central moment divided by the square of the variance
         statistics['$Kurt[X]$'] = class_samples["dim_0"].apply(kurtosis)
 
@@ -195,36 +196,51 @@ def _get_overall_data_set_characteristics(data_set_name, multivariate=False):
 
 
 def _get_all_data_set_characteristics(multivariate=False, number_data_sets=None, normalize_each_characteristic=False):
-    all_data_set_characteristics = {}
-    
-    if number_data_sets is None:
-        data_sets = list_data_sets(multivariate=multivariate)
-    else:
-        data_sets = list_data_sets(multivariate=multivariate)[:number_data_sets]
-        
-    for data_set in tqdm(data_sets):
-        # try catch block
-        try:
-            all_data_set_characteristics[data_set] = _get_overall_data_set_characteristics(
-                data_set_name=data_set,
-            )
-        except:
-            pass
-    # convert all_data_set_characteristics to dataframe
-    data_set_characteristics = pd.DataFrame.from_dict(
-        all_data_set_characteristics, orient="index"
-    )
 
-    if normalize_each_characteristic:
-        # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
-        return_data_set_characteristics = (
-            data_set_characteristics - data_set_characteristics.min()
-        ) / (data_set_characteristics.max() - data_set_characteristics.min())
-    else: 
-        return_data_set_characteristics = data_set_characteristics
-    
-    if not multivariate:
-        return_data_set_characteristics=return_data_set_characteristics.drop(columns=["dim_count"])
+    # Define the filename based on the parameters
+    file_name = f"data_centric_mv_{multivariate}_num_{number_data_sets}_norm_{normalize_each_characteristic}.csv"
+    file_path = os.path.join(DATA_CENTRIC_PATH, file_name)
+
+    # Check if the CSV file already exists
+    if os.path.exists(file_path):
+        # Load the DataFrame from the CSV file
+        df = pd.read_csv(file_path, index_col=0)
+        return_data_set_characteristics = df
+            
+    else:
+                
+        all_data_set_characteristics = {}
+        
+        if number_data_sets is None:
+            data_sets = list_data_sets(multivariate=multivariate)
+        else:
+            data_sets = list_data_sets(multivariate=multivariate)[:number_data_sets]
+            
+        for data_set in tqdm(data_sets):
+            # try catch block
+            try:
+                all_data_set_characteristics[data_set] = _get_overall_data_set_characteristics(
+                    data_set_name=data_set,
+                )
+            except:
+                pass
+        # convert all_data_set_characteristics to dataframe
+        data_set_characteristics = pd.DataFrame.from_dict(
+            all_data_set_characteristics, orient="index"
+        )
+
+        if normalize_each_characteristic:
+            # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
+            return_data_set_characteristics = (
+                data_set_characteristics - data_set_characteristics.min()
+            ) / (data_set_characteristics.max() - data_set_characteristics.min())
+        else: 
+            return_data_set_characteristics = data_set_characteristics
+        
+        if not multivariate:
+            return_data_set_characteristics=return_data_set_characteristics.drop(columns=["$N^{d}$"])
+            
+        return_data_set_characteristics.to_csv(file_path)
     
     return return_data_set_characteristics
 
