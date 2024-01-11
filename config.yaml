@@ -1,0 +1,40 @@
+# Normalization applied when loading each individual data set
+# Default set to 'none' for no normalization,
+# Options are 'none', 'minmax', 'zscore', 'mean', 'robust', 'unit_vector'.
+data_set_normalization: minmax  
+
+
+# list of characteristics that describe a data set on a holistic level 
+dataset_meta_descriptives: # Add other descriptives as needed
+  - dim_count
+  - number_train_instances
+  - length_train_instance
+  - number_test_instances
+  - length_test_instance
+  - number_target_classes
+  - min_instances_per_class
+  - max_instances_per_class
+  - mean_instances_per_class
+  - std_instances_per_class
+
+
+# list of characteristics that will be calculated on each instance 
+dataset_instance_descriptives: 
+  - percentiles
+  - IQR
+  - CV
+  - mean_change
+  - max_change
+  - std_change
+  - skewness 
+  - kurtosis
+  - autocorrelation
+
+# define how the embeddings of individual instances should be aggregated within a class 
+aggregation_within_class: mean
+
+# define how the aggregated embeddings of multiple classes should be compared 
+disparity_among_classes: 
+  - std
+  - range
+  - IQR

@@ -5,6 +5,9 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+
+from get_root import PROJECT_ROOT
+
 from src.utils_performance import (
     _get_algorithm_performance_all_data_set,
 )
@@ -128,6 +131,11 @@ def _visualise_algorithm_data_centric(
 
     plt.show()
 
+# %%
+_visualise_algorithm_data_centric(
+    algorithm_name="ROCKET", number_data_sets=5,
+    save_figure=False
+)
 
 # %%
 for number_data_sets in [10,20,30, 50, None]:

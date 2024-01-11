@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+
+from get_root import PROJECT_ROOT
+
 from src.utils_performance import (
     _all_algorithms_all_datasets_performance,
 )
@@ -14,7 +17,7 @@ from src.utils_visualization import NotebookFigureSaver
 from src.utils_data_centric import _get_all_data_set_characteristics
 
 # Where to save the figures
-CHAPTER_ID = "f_uncertainty_estimation"
+CHAPTER_ID = "g_uncertainty_estimation"
 fig_saver = NotebookFigureSaver(CHAPTER_ID)
 
 # %%
@@ -50,19 +53,26 @@ from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+import random 
+
+# Random Seed at file level
+random_seed = 42
+
+np.random.seed(random_seed)
+random.seed(random_seed)
 
 # Define the regression models to test
 models = {
-    "RandomForestRegressor": RandomForestRegressor(n_estimators=100, random_state=42),
-    "LinearRegression": LinearRegression(),
+    "RandomForest": RandomForestRegressor(n_estimators=100, random_state=42),
+    # "LinearRegression": LinearRegression(),
     "Ridge": Ridge(),
-    "DecisionTreeRegressor": DecisionTreeRegressor(),
+    "DecisionTree": DecisionTreeRegressor(min_samples_leaf=5, random_state=42),
     "SVR": SVR(),
-    "KNeighborsRegressor": KNeighborsRegressor(),
-    "GradientBoostingRegressor": GradientBoostingRegressor(),
-    "AdaBoostRegressor": AdaBoostRegressor(),
-    "Lasso": Lasso(),
-    "ElasticNet": ElasticNet(),
+    "KNeighbors": KNeighborsRegressor(),
+    "GradientBoosting": GradientBoostingRegressor(),
+    "AdaBoost": AdaBoostRegressor(),
+    # "Lasso": Lasso(),
+    # "ElasticNet": ElasticNet(),
 }
 
 # Store results
@@ -109,7 +119,6 @@ for applied_algorithm in Y.columns:
             f"Model: {model_name}\n MAE data-Centric: {mae_model},MAE Naive Baseline: {mae_naive} Relative Improvement: {relative_improvement*100:.2f}% \n"
         )
 
-
 # %%
 # Initialize an empty dictionary to collect data
 data = {}
@@ -141,65 +150,82 @@ results_df_percentage = results_df * 100
 color_bar_limit = [-25, 25]  # Adjust these limits as needed
 
 # Generate heatmap for results_df
-plt.figure(figsize=(12, 8))
+fig_size = (10, 12)
+fig, ax = plt.subplots(1, 1, figsize=fig_size, sharex=False, sharey=True)
+# Add labels and title
+plt.xlabel(
+    "Algorithm to estimate Performance based on data-centric characteristics",
+    fontsize=18,
+)
+# Extract algorithm names
+algorithm_names = [
+    algorithm_name.replace("_ACC", "") if algorithm_name.endswith("_ACC") else algorithm_name 
+    for algorithm_name in results_df_percentage.index
+]
+results_df_percentage.index = algorithm_names
+
+# Calculate the positions and labels for x-ticks
+y_tick_positions = [i + 0.5 for i in range(len(algorithm_names))]
+y_tick_labels = algorithm_names
+
+cbar_ax = fig.add_axes([0.92, 0.1, 0.02, .88])
+
+results_df_percentage =pd.concat([results_df_percentage,pd.DataFrame(results_df_percentage.min(axis=1),columns=["Best"])],axis=1)
+
 sns.heatmap(
     results_df_percentage,
     cmap="coolwarm",
+    ax=ax,
+    cbar_ax=cbar_ax,
     annot=True,
     cbar=True,
     fmt=".1f",
     vmin=color_bar_limit[0],
     vmax=color_bar_limit[1],
+    annot_kws={"size": 18},
     cbar_kws={"label": "Relative Improvement (%)"},
 )
+cbar = ax.collections[0].colorbar
+cbar.ax.tick_params(labelsize=18)
+cbar.set_label('Relative Improvement (%)', fontsize=18)
 
-# Add labels and title
-plt.xlabel(
-    "Algorithm to estimate Performance based on data-centric characteristics",
-    fontsize=12,
-)
-
-# Extract algorithm names
-algorithm_names = [
-    algorithm_name.strip("_ACC") for algorithm_name in results_df_percentage.index
-]
-# Calculate the positions and labels for x-ticks
-y_tick_positions = [i + 0.5 for i in range(len(algorithm_names))]
-y_tick_labels = algorithm_names
-# Set the x-ticks at the calculated positions and use the labels
-plt.yticks(
-    y_tick_positions,
-    y_tick_labels,
-)
-plt.xticks(
-    rotation=15,
-    ha="right",
-)
-
-plt.ylabel("Target Algorithm Performance to estimate", fontsize=12)
-plt.title(
-    "Relative Improvement of data-centric approach vs. naive baseline [negative values better]",
-    fontsize=14,
-)
+ax.set_ylabel(r"Target algorithm $h(.)$", fontsize=18)  # Set the y-axis label
+ax.tick_params(axis="x",labelsize=18)
+ax.tick_params(axis="y", labelsize=18)
+ax.grid(visible=True, linestyle="--", alpha=0.7)
+ax.set_xticklabels(ax.get_xticklabels(), rotation=20, ha="right")  #.set_xticklabels
+ax.set_yticklabels(algorithm_names, fontsize=18)
+plt.subplots_adjust(hspace=.5, wspace=0.05, left=0.2, right=0.9, bottom=0.1, top=.98)
 
 if save_figure:
     fig_saver.save_fig(f"performance_improvement_naive_baseline")
 
 plt.show()
 
+#%%
+results_df_percentage = results_df_percentage.round(2).astype(str)
+print(results_df_percentage.to_latex())
 
-# %%
+#%%
 import matplotlib.pyplot as plt
 import numpy as np
 
-algorithm_choice = "ROCKET_ACC"  # Replace with the desired algorithm choice
-algorithm_choice = "Hydra_ACC"
-algorithm_choice = "WEASEL_ACC"
+applied_algorithm = "Hydra_ACC"
+applied_algorithm = "WEASEL_ACC"
+applied_algorithm = "WEASEL-D_ACC"
+applied_algorithm = "STSF_ACC"
+applied_algorithm = "ROCKET_ACC"  # Replace with the desired algorithm choice
+applied_algorithm = "BOSS_ACC" 
 
-applied_algorithm = "ROCKET_ACC"
-model_name = "GradientBoostingRegressor"
+model_name = "AdaBoost"
+model_name = "SVR"
+model_name = "RandomForest"
 
-plt.figure(figsize=(10, 6))
+save_figure = True
+
+
+fig_size = (10, 4)
+fig, ax = plt.subplots(1, 1, figsize=fig_size, sharex=False, sharey=True)
 gt_performance = results_dict[applied_algorithm][model_name]["GT Performance"].values
 estimated_performance = results_dict[applied_algorithm][model_name][
     "Estimated Performance"
@@ -209,7 +235,8 @@ naive_baseline = results_dict[applied_algorithm][model_name]["Naive Baseline"]
 plt.scatter(
     gt_performance,
     estimated_performance,
-    label="Predicted Performance",
+    label="Predicted $\mathbb{E}_{h}^{d}$",
+    s=100,
     alpha=0.7,
 )
 plt.plot(
@@ -223,14 +250,14 @@ plt.plot(
     ],
     linestyle="--",
     color="orange",
-    label="Naive Baseline Performance",
+    label="Naive Baseline $\mathbb{E}_{h}^{d}$",
 )
 # Plot the perfect prediction line
 plt.plot(
     [gt_performance.min(), gt_performance.max()],
     [gt_performance.min(), gt_performance.max()],
     "k--",
-    label="Perfect Prediction",
+    label="GT $\mathbb{E}_{h}^{d}$",
 )
 
 # Adding error bars
@@ -244,6 +271,7 @@ for i in range(len(gt_performance)):
             ymin=estimated_performance[i],
             ymax=naive_baseline[i],
             color="green",
+            linewidth=4,
             alpha=0.7,
             linestyles="dotted",
         )
@@ -257,12 +285,18 @@ for i in range(len(gt_performance)):
             ymax=estimated_performance[i],
             color="red",
             alpha=0.7,
+            linewidth=4,
             linestyles="dotted",
         )
 
-plt.xlabel("GT Performance")
-plt.ylabel("Performance")
-plt.legend()
+plt.xlabel("Ground Truth", fontsize=18)
+plt.ylabel("Estimated", fontsize=18)
+ax.tick_params(axis="x",labelsize=18)
+ax.tick_params(axis="y", labelsize=18)
+plt.legend(fontsize=18)
+plt.subplots_adjust(hspace=.5, wspace=0.05, left=0.08, right=0.99, bottom=0.15, top=.99)
+if save_figure:
+    fig_saver.save_fig(f"performance_comparison_{applied_algorithm}_{model_name}")
 plt.show()
 
 # %%

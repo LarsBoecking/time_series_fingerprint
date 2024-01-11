@@ -5,6 +5,10 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+
+from get_root import PROJECT_ROOT
+
+
 from src.utils_performance import (
     _all_algorithms_all_datasets_performance,
 )
@@ -118,9 +122,10 @@ def _visualise_data_set_mapping(
     # Show the plot
     plt.show()
 
+
 # %%
 _visualise_data_set_mapping(
-    number_data_sets=10,
+    number_data_sets=5,
     save_figure=False,
 )
 # %%

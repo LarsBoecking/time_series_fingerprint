@@ -1,6 +1,9 @@
 numpy
 pandas
 
+# config 
+pyyaml
+
 # visualisations
 matplotlib
 seaborn
