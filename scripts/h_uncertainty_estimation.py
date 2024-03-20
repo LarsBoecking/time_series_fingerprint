@@ -1,13 +1,14 @@
 # %%
-# import required functions and classes
 import os
+import pyrootutils
+PROJECT_ROOT_DIR = pyrootutils.setup_root(os.path.abspath(''), dotenv=True, pythonpath=True)
+os.chdir(PROJECT_ROOT_DIR)
+
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
-
-from get_root import PROJECT_ROOT
 
 from src.utils_performance import (
     _all_algorithms_all_datasets_performance,

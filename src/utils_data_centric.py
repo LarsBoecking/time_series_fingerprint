@@ -291,10 +291,13 @@ def _get_all_data_set_characteristics(
         )
 
         if normalize_each_characteristic:
-            # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
+            # !Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
+            # return_data_set_characteristics = (
+            #     data_set_characteristics - data_set_characteristics.min()
+            # ) / (data_set_characteristics.max() - data_set_characteristics.min())
             return_data_set_characteristics = (
-                data_set_characteristics - data_set_characteristics.min()
-            ) / (data_set_characteristics.max() - data_set_characteristics.min())
+                data_set_characteristics - data_set_characteristics.mean()
+            ) / (data_set_characteristics.std() )
         else:
             return_data_set_characteristics = data_set_characteristics
 

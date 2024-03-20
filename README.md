@@ -2,12 +2,12 @@
 _______
 
 # Research Project
-# ⏰📈 - Data-Centric AI in Multivariate Time Series Classification 
+# ⏰📈 - Data-Centric AI in Univariate Time Series Classification 
 </div>
 
 ## 📌  Introduction & Description
 
-This research project elaborates on concepts for an data centric perspective on multivariate time series classification. 
+This research project elaborates on concepts for an data centric perspective on univariate time series classification. 
 
 
 ## 🏫 Affiliations 
@@ -30,9 +30,6 @@ This research project elaborates on concepts for an data centric perspective on 
 - Univariate data set: 
     - http://www.timeseriesclassification.com/aeon-toolkit/Archives/Univariate2018_ts.zip
     - place it here: datasets/Univariat_ts
-- Multivariate data set: 
-    - http://www.timeseriesclassification.com/aeon-toolkit/Archives/Multivariate2018_ts.zip
-    - place it here: datasets/Multivariate_ts
 
 - Results folder:
     - https://github.com/time-series-machine-learning/tsml-eval/tree/main/results
