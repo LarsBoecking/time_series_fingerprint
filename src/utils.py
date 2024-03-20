@@ -10,7 +10,6 @@ import sys
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 # Define the data paths
-MULTIVARIATE_DATA_PATH = os.path.join(PROJECT_ROOT, "datasets", "Multivariate_ts")
 UNIVARIATE_DATA_PATH = os.path.join(PROJECT_ROOT, "datasets", "Univariate_ts")
 
 # Read the normalization parameter from the YAML file
@@ -18,17 +17,14 @@ with open(os.path.join(PROJECT_ROOT,"config.yaml"), "r") as file:  # Replace wit
     config = yaml.safe_load(file)
 
 
-def list_data_sets(multivariate: bool = True):
+def list_data_sets():
     """
     List all data sets in the defined path.
-
-    Args:
-        multivariate (bool): Whether to search for multivariate data sets.
 
     Returns:
         list: A list of subfolder names representing data sets.
     """
-    search_path = MULTIVARIATE_DATA_PATH if multivariate else UNIVARIATE_DATA_PATH
+    search_path = UNIVARIATE_DATA_PATH
     
     subfolders = [f.name for f in os.scandir(search_path) if f.is_dir()]
     
@@ -37,19 +33,16 @@ def list_data_sets(multivariate: bool = True):
 
 def _load_data_set(
     data_set_name: str = "Beef",
-    multivariate: bool = False,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Load a specific data set with the predefined train test split from sk-time.
 
     Parameters:
         data_set_name (str): The name of the data set to load. Defaults to "ArticularyWordRecognition".
-        multivariate (bool): Whether the data set is multivariate or univariate. Defaults to True.
     Returns:
         tuple: A tuple containing the train data and test data, possibly normalized.
     """
-    # Determine the extract path based on whether the data set is multivariate or univariate
-    extract_path = MULTIVARIATE_DATA_PATH if multivariate else UNIVARIATE_DATA_PATH
+    extract_path = UNIVARIATE_DATA_PATH
     normalization = config.get("data_set_normalization", "none")  # Default to 'none' if not found
     
     # Load the train data set

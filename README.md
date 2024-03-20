@@ -2,58 +2,39 @@
 _______
 
 # Research Project
-# ⏰📈 - Data-Centric AI in Univariate Time Series Classification 
+# ⏰📈 - Data-centric Algorithm Selection for Time Series Classification: Estimating Performance and Uncertainty
 </div>
 
 ## 📌  Introduction & Description
 
-This research project elaborates on concepts for an data centric perspective on univariate time series classification. 
+The selection of algorithms for real-world time series classification is a frequently debated topic. 
+Traditional methods such as neural architecture search, automated machine learning, as well as combined algorithm selection and hyperparameter optimizations are effective but require considerable computational resources.
+In this work, we introduce a novel data-centric fingerprint that describes any time series classification dataset and provides insight into the algorithm selection problem without requiring training on the (unseen) dataset. 
+Our selection strategy integrates model-centric AI advancements by leveraging existing benchmarks on time series datasets, building upon previously performed architecture and hyperparameter optimization.
+By decomposing the multi-target regression problem, our data-centric fingerprints are used to estimate algorithm performance and uncertainty in a scalable and adaptable manner. 
+Our approach is evaluated on the 112 UCR-benchmark datasets, demonstrating its effectiveness in predicting the performance of 35 state-of-the-art algorithms and providing valuable insights for effective algorithm selection, improving a naive baseline by 7.66\% on average in estimating the mean performance and 13.91\% in estimating the uncertainty. 
 
-
-## 🏫 Affiliations 
-> ## **University Bayreuth (UBT)** <br>
-> Faculty of Law, Business Management and Economics <br>
-> Chair for Business Informatics and Human-Centered Artificial Intelligence <br>
-> Institute of Information Systems and Marketing (IISM) <br>
-
-> ## **Fraunhofer Institute for Applied Information Technology (FIT)** <br>
-> Department of Business Informatics <br>
-> FIM Research Institute for Information Management <br>
-
-
-## 👨🏻‍🏫👩🏻‍🏫 People
-> Lars Böcking <br>
-> Leopold Müller  <br>
-
-
-## Download the data
-- Univariate data set: 
-    - http://www.timeseriesclassification.com/aeon-toolkit/Archives/Univariate2018_ts.zip
-    - place it here: datasets/Univariat_ts
-
-- Results folder:
-    - https://github.com/time-series-machine-learning/tsml-eval/tree/main/results
-        - including subfolder classification & regression
-    - place it here: results/
 
 ## 🚀  Quickstart - How to run the code 
 
-Install dependencies
-
+1. clone project
 ```bash
-# clone project
-git clone https://gitlab.fit.fraunhofer.de/lars.boecking/data_centric_ts.git
+git clone TBD
 cd data_centric_ts
+```
 
-# install requirements
+2. Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-run the code to explore the data-centric-AI concepts
-
+3. Run the code to explore the data-centric-AI concepts
 ```bash
-# for example for the univariate data exploration 
-python a_univariat_explore_data.py 
+/notebooks/a_explore_data.ipynb
 ```
 
-
+## 📦  Datasets
+If you want to recalculate the fingerprints, download the raw univariate data set:
+http://www.timeseriesclassification.com/aeon-toolkit/Archives/Univariate2018_ts.zip
+and place it here: datasets/Univariat_ts
+then you can delete datasets/data_centric/data_centric_mv_False_num_None_norm_True.csv, such that the fingerprints are recalculated on the next run.
