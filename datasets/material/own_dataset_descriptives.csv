@@ -1,7 +1,0 @@
-,ArticularyWordRecognition,AtrialFibrillation,BasicMotions,CharacterTrajectories,Cricket,DuckDuckGeese,ERing,EigenWorms,Epilepsy,EthanolConcentration,FaceDetection,FingerMovements,HandMovementDirection,Handwriting,Heartbeat,InsectWingbeat,JapaneseVowels,LSST,Libras,MotorImagery,NATOPS,PEMS-SF,PenDigits,PhonemeSpectra,RacketSports,SelfRegulationSCP1,SelfRegulationSCP2,SpokenArabicDigits,StandWalkJump,UWaveGestureLibrary
-dim_count,9,2,6,3,6,1345,4,6,3,3,144,28,10,3,61,200,12,6,2,64,24,963,2,11,6,6,7,13,4,3
-number_train_instances,275,15,40,1422,108,50,30,128,137,261,5890,316,160,150,204,25000,270,2459,180,278,180,267,7494,3315,151,268,200,6599,12,120
-length_train_instance,144,640,100,116,1197,270,65,17984,206,1751,62,50,400,152,405,7,20,36,45,3000,51,144,8,217,30,896,1152,38,2500,315
-number_test_instances,300,15,40,1436,72,50,270,131,138,263,3524,100,74,850,205,25000,370,2466,180,100,180,173,3498,3353,152,293,180,2199,15,320
-length_test_instance,144,640,100,144,1197,270,65,17984,206,1751,62,50,400,152,405,10,19,36,45,3000,51,144,8,217,30,896,1152,28,2500,315
-number_target_classes,25,3,4,20,12,5,6,5,4,4,2,2,4,26,2,10,9,14,15,2,6,7,10,39,4,2,2,10,3,8
