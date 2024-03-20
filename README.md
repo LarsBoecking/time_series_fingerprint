@@ -18,18 +18,18 @@ Our approach is evaluated on the 112 UCR-benchmark datasets, demonstrating its e
 ## 🚀  Quickstart - How to run the code 
 The code was developed and tested on Python 3.11.0.
 
-1. clone project
+1. download project from the anonymous link
 ```bash
-git clone TBD
-cd data_centric_ts
+https://anonymous.4open.science/r/data_centric_estimation_time_series/
 ```
 
-2. Install dependencies
+1. Install dependencies
 ```bash
+cd data_centric_ts
 pip install -r requirements.txt
 ```
 
-3. Run the experiments in the notebooks
+1. Run the experiments in the notebooks
 ```bash
 /notebooks/a_explore_data.ipynb
 ```
@@ -38,4 +38,4 @@ pip install -r requirements.txt
 If you want to recalculate the fingerprints, download the raw univariate data set:
 http://www.timeseriesclassification.com/aeon-toolkit/Archives/Univariate2018_ts.zip
 and place it here: datasets/Univariat_ts
-then you can delete datasets/data_centric/data_centric_mv_False_num_None_norm_True.csv, such that the fingerprints are recalculated on the next run.
+then you can delete datasets/data_centric/data_centric_num_None_norm_True.csv, such that the fingerprints are recalculated on the next run.
