@@ -14,7 +14,7 @@ The code was developed and tested on Python 3.11.0.
 
 1. download project from the anonymous link:
 ```bash
-https://anonymous.4open.science/r/data_centric_estimation_time_series/
+https://anonymous.4open.science/r/time_series_fingerprint
 ```
 
 1. Install dependencies:
