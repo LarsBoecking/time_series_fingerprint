@@ -48,7 +48,7 @@ then you can delete datasets/data_centric/data_centric_num_None_norm_True.csv, s
 | Coefficient of variation CV | $\frac{\sigma(x^{i,d})}{\bar{x}^{i,d}}$                      |
 | Maximum value ($\max(x^{i,d})$)  | $\max\limits_{t=1,\ldots,T} x^{i,d}_{t}$                     |
 | Skewness ($\gamma_{1}$)      | $\frac{\text{E}\left[ \left( x^{i,d} - \overline{x^{i,d}} \right)^3 \right]}{\sigma^3}$ |
-| Percentile ($\text{P}_{th}$) | $x^{i,d}$ at the ${p\%}$-percentile                          |
+| Percentile ($\text{P}_{th}$) | $x^{i,d}$ at the p\%-percentile                          |
 | Kurtosis ($\text{Kurt}[x^{i,d}]$) | $\frac{\text{E}\left[ \left( x^{i,d} - \overline{x^{i,d}} \right)^4 \right]}{\sigma^4} - 3$ |
 | Interquartile range (IQR)    | $\text{P}_{75}(x^{i,d}) - \text{P}_{25}(x^{i,d})$            |
 | Autocorrelation ($R_{XX}$)   | $\frac{\sum\limits_{t=1}^{T-1} \left( x^{i,d}_t - \overline{x^{i,d}} \right)\left( x^{i,d}_{t+1} - \overline{x^{i,d}} \right)}{\sum\limits_{t=1}^{T} \left( x^{i,d}_t - \overline{x^{i,d}} \right)^2}$ |
