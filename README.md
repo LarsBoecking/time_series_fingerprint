@@ -19,7 +19,6 @@ https://anonymous.4open.science/r/time_series_fingerprint
 
 1. Install dependencies:
 ```bash
-cd data_centric_ts
 pip install -r requirements.txt
 ```
 
