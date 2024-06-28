@@ -18,28 +18,25 @@ from src.utils import _load_data_set, list_data_sets, config, PROJECT_ROOT
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 # Define the data paths
-MULTIVARIATE_DATA_PATH = os.path.join(PROJECT_ROOT, "datasets", "Multivariate_ts")
 UNIVARIATE_DATA_PATH = os.path.join(PROJECT_ROOT, "datasets", "Univariate_ts")
 DATA_CENTRIC_PATH = os.path.join(PROJECT_ROOT, "datasets", "data_centric")
 
 
 def _get_dataset_descriptives(
     data_set_name: str,
-    multivariate: bool = True,
 ) -> dict:
     """
     Retrieves descriptive statistics about a given dataset.
 
     Parameters:
         data_set_name (str): The name of the dataset to retrieve statistics for.
-        multivariate (bool): Flag indicating whether the performance results are for multivariate classification.
 
 
     Returns:
         dict: A dictionary containing selected descriptive statistics as specified in a YAML configuration.
     """
     train_data, test_data = _load_data_set(
-        data_set_name=data_set_name, multivariate=multivariate
+        data_set_name=data_set_name
     )
     # get the list of meta characteristics that should be calculated
     required_descriptives = config.get("dataset_meta_descriptives", [])
@@ -94,10 +91,10 @@ def _get_dataset_descriptives(
     return data_set_descriptive_dict
 
 
-def _get_data_set_class_level_characteristics(data_set_name, multivariate=False):
+def _get_data_set_class_level_characteristics(data_set_name):
     # Load the data
     train_data, test_data = _load_data_set(
-        data_set_name=data_set_name, multivariate=multivariate
+        data_set_name=data_set_name
     )
 
     # get the individual classes
@@ -188,9 +185,9 @@ def _get_data_set_class_level_characteristics(data_set_name, multivariate=False)
     return target_class_descriptives
 
 
-def _get_data_set_comparative_characteristics(data_set_name, multivariate=False):
+def _get_data_set_comparative_characteristics(data_set_name):
     target_class_descriptives = _get_data_set_class_level_characteristics(
-        data_set_name=data_set_name, multivariate=multivariate
+        data_set_name=data_set_name
     )
 
     aggregation_method = config.get("aggregation_within_class", "mean")
@@ -239,12 +236,12 @@ def _get_data_set_comparative_characteristics(data_set_name, multivariate=False)
     return difference_descriptives
 
 
-def _get_overall_data_set_characteristics(data_set_name, multivariate=False):
+def _get_overall_data_set_characteristics(data_set_name):
     difference_descriptives = _get_data_set_comparative_characteristics(
-        data_set_name, multivariate=multivariate
+        data_set_name
     )
     data_set_high_level_characteristics = _get_dataset_descriptives(
-        data_set_name, multivariate=multivariate
+        data_set_name
     )
     combined_characteristics = (
         difference_descriptives | data_set_high_level_characteristics
@@ -254,10 +251,10 @@ def _get_overall_data_set_characteristics(data_set_name, multivariate=False):
 
 
 def _get_all_data_set_characteristics(
-    multivariate=False, number_data_sets=None, normalize_each_characteristic=False
+   number_data_sets=None, normalize_each_characteristic=False
 ):
     # Define the filename based on the parameters
-    file_name = f"data_centric_mv_{multivariate}_num_{number_data_sets}_norm_{normalize_each_characteristic}.csv"
+    file_name = f"data_centric_num_{number_data_sets}_norm_{normalize_each_characteristic}.csv"
     file_path = os.path.join(DATA_CENTRIC_PATH, file_name)
 
     # Check if the CSV file already exists
@@ -270,9 +267,9 @@ def _get_all_data_set_characteristics(
         all_data_set_characteristics = {}
 
         if number_data_sets is None:
-            data_sets = list_data_sets(multivariate=multivariate)
+            data_sets = list_data_sets()
         else:
-            data_sets = list_data_sets(multivariate=multivariate)[:number_data_sets]
+            data_sets = list_data_sets()[:number_data_sets]
 
         for data_set in tqdm(data_sets):
             # try catch block
@@ -291,32 +288,26 @@ def _get_all_data_set_characteristics(
         )
 
         if normalize_each_characteristic:
-            # Normalize the dataset characteristics by subtracting the mean and dividing by the standard deviation
             return_data_set_characteristics = (
                 data_set_characteristics - data_set_characteristics.min()
             ) / (data_set_characteristics.max() - data_set_characteristics.min())
         else:
             return_data_set_characteristics = data_set_characteristics
 
-        if not multivariate:
-            if "$N^{d}$" in return_data_set_characteristics.columns:
-                return_data_set_characteristics = return_data_set_characteristics.drop(
-                    columns=["$N^{d}$"]
-                )
+        if "$N^{d}$" in return_data_set_characteristics.columns:
+            return_data_set_characteristics = return_data_set_characteristics.drop(
+                columns=["$N^{d}$"]
+            )
 
         return_data_set_characteristics.to_csv(file_path)
 
     return return_data_set_characteristics
 
 
-def _get_dataset_descriptives_master_table(multivariate: bool = True):
+def _get_dataset_descriptives_master_table():
     """
     Generate the master dictionary for dataset descriptives.
-    Iterating over all available multivariate datasets in the "datasets/Multivariate_ts" folder,
     the descriptives are extracted and stored in a master dictionary.
-
-    Parameters:
-        multivariate (bool): Flag indicating whether multivariate or univariate classification should be explored
 
     Returns:
         dict: (Dict[str, pd.DataFrame]):
@@ -324,8 +315,7 @@ def _get_dataset_descriptives_master_table(multivariate: bool = True):
             The columns in the DataFrame correspond to the available algorithms and
             the rows to the calculated descriptives.
     """
-    # Set the path based on the multivariate flag
-    data_path = MULTIVARIATE_DATA_PATH if multivariate else UNIVARIATE_DATA_PATH
+    data_path = UNIVARIATE_DATA_PATH
 
     # Get a list of all files in the data path
     available_data_sets = sorted(os.listdir(data_path))

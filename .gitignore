@@ -84,18 +84,10 @@ venv/
 ENV/
 
 # do not upload the data set
-datasets/Multivariate_ts/*
 datasets/Univariate_ts/*
-datasets/data_centric/*
 
 # do not upload the rocket implementation 
-rocket/*
-sk_time_examples/*
 .DS_Store
-
-
-# leave out the sktime examples 
-sk_time_examples
 
 # also ignore .png files
 *.png
