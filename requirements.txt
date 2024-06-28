@@ -1,28 +1,19 @@
+
+# project setup
+pyrootutils
+pyyaml
+
+# data processing
 numpy
 pandas
+Jinja2
+tqdm
+aeon
+
+# models 
+scikit-learn
+sktime
 
 # visualisations
 matplotlib
 seaborn
-
-# models 
-torch
-torchvision
-torchaudio
-scikit-learn
-sktime
-sktime-dl
-
-# rocket git repo
-numba
-scikit-posthocs
-mrseql
-
-# data processing
-tqdm
-aeon
-
-# sktime extra dependencies
-pmdarima
-tbats
-prophet

@@ -7,36 +7,27 @@ from collections import defaultdict
 from typing import Dict
 from collections import defaultdict
 from tqdm import tqdm
+from src.utils import  config, PROJECT_ROOT
 
 # Define the data paths
-MULTIVARIATE_DATA_PATH = os.path.join(os.getcwd(), "datasets", "Multivariate_ts")
-UNIVARIATE_DATA_PATH = os.path.join(os.getcwd(), "datasets", "Univariate_ts")
+UNIVARIATE_DATA_PATH = os.path.join(PROJECT_ROOT, "datasets", "Univariate_ts")
 
 
-def _get_performance_master_dict(multivariate=True):
+def _get_performance_master_dict():
     """
     Generate a dictionary containing the raw performance metrics for each algorithm on each data set and all available folds.
     Note:
         This function assumes that the algorithm performance results are stored in CSV files.
-        The CSV files should be located in the "results/classification/Multivariate" directory.
         The CSV file names should correspond to the algorithm names.
         The first column of each CSV file should contain the fold numbers, labeled as "folds:".
         The remaining columns should contain the performance metrics for each fold.
-    Args:
-        multivariate (bool): Flag indicating whether the performance results are for multivariate classification.
-        If True, the results are assumed to be stored in the "results/classification/Multivariate" directory.
-        If False, the results are assumed to be stored in the "results/classification/Univariate" directory.
     Returns:
         performance_dict (Dict[str, pd.DataFrame]):
             A dictionary where the keys are the data set names and the values are pandas DataFrame.
             The columns in the DataFrame corespond to the available algorithms and the rows to the folds.
     """
-    if multivariate:
-        # result path multi variate classification
-        result_path = os.path.join("results", "classification", "Multivariate")
-    else:
-        # result path uni variate classification
-        result_path = os.path.join("results", "classification", "Univariate")
+    # result path uni variate classification
+    result_path = os.path.join(PROJECT_ROOT, "results", "classification", "Univariate")
 
     # List all files in the current directory
     algorithm_result = os.listdir(result_path)
@@ -45,8 +36,7 @@ def _get_performance_master_dict(multivariate=True):
 
     for index_algorithm, algorithm_name in enumerate(algorithm_result):
         algorithm_performance = _load_algorithm_performance(
-            algorithm_name=algorithm_name, multivariate=multivariate
-        )
+            algorithm_name=algorithm_name)
         algorithm_name = algorithm_name.rstrip(".csv")
 
         fold_columns = algorithm_performance.columns.drop("folds:")
@@ -137,32 +127,25 @@ def _calculate_algorithm_descriptives(
 
 def _load_algorithm_performance(
     algorithm_name: str = "Arsenal_ACC.csv",
-    multivariate: bool = True,
 ) -> pd.DataFrame:
     """
     Load the performance csv for a specific algorithm.
 
     Args:
         algorithm_name (str, optional): The name of the algorithm. Defaults to "Arsenal_ACC.csv".
-        multivariate (bool): Flag indicating whether the performance results are for multivariate classification.
 
 
     Returns:
         pd.DataFrame: The algorithm performance data.
     """
-    if multivariate:
-        # result path multi variate classification
-        result_path = os.path.join("results", "classification", "Multivariate")
-    else:
-        # result path uni variate classification
-        result_path = os.path.join("results", "classification", "Univariate")
+    result_path = os.path.join(PROJECT_ROOT, "results", "classification", "Univariate")
 
     algorithm_performance = pd.read_csv(os.path.join(result_path, algorithm_name))
 
     return algorithm_performance
 
 
-def _get_data_set_descriptive_performance(data_set_name, multivariate: bool = True):
+def _get_data_set_descriptive_performance(data_set_name):
     """
     Get the descriptive performance ofall available algorithms on the specified data set.
     For each algorithm the function _calculate_descriptive_performance is called processing
@@ -176,7 +159,7 @@ def _get_data_set_descriptive_performance(data_set_name, multivariate: bool = Tr
         model_performance_descriptive (pandas.DataFrame):
             A DataFrame containing the descriptive performance of each algorithm on the specified data set.
     """
-    performance_dict = _get_performance_master_dict(multivariate=multivariate)
+    performance_dict = _get_performance_master_dict()
     model_performance_descriptive = {}
     for algorithm_name, algorithm_performance in performance_dict[
         data_set_name
@@ -191,8 +174,13 @@ def _get_data_set_descriptive_performance(data_set_name, multivariate: bool = Tr
 
     return model_performance_descriptive
 
-def _get_algorithm_performance_all_data_set(algorithm_name="Arsenal_ACC.csv",multivariate=False):
-    model_performance = _load_algorithm_performance(algorithm_name=algorithm_name,multivariate=multivariate)
+
+def _get_algorithm_performance_all_data_set(
+    algorithm_name="Arsenal_ACC.csv"
+):
+    model_performance = _load_algorithm_performance(
+        algorithm_name=algorithm_name,
+    )
 
     model_performance_descriptive = {}
     fold_columns = model_performance.columns.drop("folds:")
@@ -210,15 +198,14 @@ def _get_algorithm_performance_all_data_set(algorithm_name="Arsenal_ACC.csv",mul
         )
 
         model_performance_descriptive[data_set_name] = descriptive_stats
-        
+
     return model_performance_descriptive
 
 
-
 def _all_algorithms_all_datasets_performance(
-    performance_of_interest="$\\hat{\\mu}$", multivariate=False
+    performance_of_interest="$\\hat{\\mu}$",
 ):
-    all_algorithm_performance = _get_performance_master_dict(multivariate=multivariate)
+    all_algorithm_performance = _get_performance_master_dict()
     descriptive_performance_dict = {}
     # iterate data set names in keys and the performance in all_algorithm_performance
     for data_set_name, performance in all_algorithm_performance.items():

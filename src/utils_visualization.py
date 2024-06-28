@@ -2,7 +2,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
+from src.utils import PROJECT_ROOT
 # make sure outputs are reproducable
 np.random.seed(42)
 
@@ -15,7 +15,7 @@ LEGEND_FONT_SIZE = 16
 
 
 def _get_image_path(PROJECT_ROOT_DIR, CHAPTER_ID):
-    IMAGES_PATH = os.path.join(os.getcwd(), "images", CHAPTER_ID)
+    IMAGES_PATH = os.path.join(PROJECT_ROOT, "images", CHAPTER_ID)
     os.makedirs(IMAGES_PATH, exist_ok=True)
 
     return IMAGES_PATH
@@ -23,7 +23,7 @@ def _get_image_path(PROJECT_ROOT_DIR, CHAPTER_ID):
 
 class NotebookFigureSaver:
     def __init__(self, CHAPTER_ID) -> None:
-        self.PROJECT_ROOT_DIR = os.getcwd()
+        self.PROJECT_ROOT_DIR = PROJECT_ROOT
         self.IMAGES_PATH = _get_image_path(self.PROJECT_ROOT_DIR, CHAPTER_ID)
         self.FIGURE_SIZE = FIGURE_SIZE
         self.TITLE_FONT_SIZE = TITLE_FONT_SIZE
@@ -32,7 +32,7 @@ class NotebookFigureSaver:
         self.LEGEND_FONT_SIZE = LEGEND_FONT_SIZE
 
     # function to save matplots to images folder
-    def save_fig(self, fig_id, tight_layout=False, fig_extension="png", resolution=300):
+    def save_fig(self, fig_id, tight_layout=False, fig_extension="png", resolution=600):
         path = os.path.join(self.IMAGES_PATH, fig_id + "." + fig_extension)
         print("Saving figure", fig_id)
         if tight_layout:
