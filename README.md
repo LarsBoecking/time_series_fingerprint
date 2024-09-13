@@ -1,7 +1,7 @@
 <div align="center">
 _______
 
-# Research Project [*HICSS 2024*]
+# Research Project [*HICSS 2025*]
 # ⏰📈 - Utilizing Data Fingerprints for Privacy-Preserving Algorithm Selection in Time Series Classification: Performance and Uncertainty Estimation on Unseen Datasets
 </div>
 
@@ -12,9 +12,9 @@ The selection of algorithms is a crucial step in designing AI services for real-
 ## 🚀  Quickstart - How to run the code 
 The code was developed and tested on Python 3.11.0.
 
-1. download project from the anonymous link:
+1. Clone the repository:
 ```bash
-https://anonymous.4open.science/r/time_series_fingerprint
+git clone https://github.com/LarsBoecking/time_series_fingerprint/
 ```
 
 1. Install dependencies:
